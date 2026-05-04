@@ -30,6 +30,15 @@
   };
   console.keyMap = "it2";
 
+  security.polkit.extraConfig = ''
+    polkit.addRule(function(action, user) {
+            if (action.id == "org.freedesktop.machine1.shell" &&
+                    user.isInGroup("wheel")) {
+            return polkit.Result.YES;
+            }
+            });
+  '';
+
   nixpkgs.config.allowUnfree = true;
 
   # Fonts.
