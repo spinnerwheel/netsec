@@ -9,6 +9,7 @@
     (modulesPath + "/profiles/minimal.nix")
     (modulesPath + "/virtualisation/virtualbox-image.nix")
     # (modulesPath + "/profiles/qemu-guest.nix")
+    ./gnome.nix
     ./containers.nix
   ];
 
@@ -21,7 +22,6 @@
       xfce.enable = true;
     };
   };
-  services.displayManager.defaultSession = "xfce";
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -31,6 +31,11 @@
   console.keyMap = "it2";
 
   nixpkgs.config.allowUnfree = true;
+
+  # Fonts.
+  fonts.packages = with pkgs; [
+    nerd-fonts.hack
+  ];
 
   environment.systemPackages = with pkgs; [
     neovim
@@ -52,7 +57,7 @@
     };
   };
 
-    # Users
+  # Users
   users.users.uru = {
     isNormalUser = true;
     description = "uru";

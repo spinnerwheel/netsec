@@ -13,38 +13,27 @@
       }
     ];
   };
-  # networking.firewall.trustedInterfaces = [ "br0" ];
   containers.attacker = {
     autoStart = false;
     privateNetwork = true;
     hostBridge = "br0";
     localAddress = "10.10.10.100/24";
-    # hostAddress = "10.10.10.1";
-    # localAddress = "10.10.10.2";
     ephemeral = true;
-    # privateUsers = "pick";
-    # Bind local dirs
-    bindMounts."/tmp/code" = {
-      hostPath = "/home/toms/Documents/unitn/network-security/lab/vm/code";
+    bindMounts."/code" = {
+      # hostPath = "/home/toms/Documents/unitn/network-security/lab/vm/code";
+      hostPath = "/home/uru/code";
       isReadOnly = true;
     };
     config =
       { pkgs, ... }:
       {
+
+        imports = [
+          ./base.nix
+        ];
+
         networking.hostName = "attacker";
 
-        programs.fish = {
-          enable = true;
-          interactiveShellInit = ''
-            set fish_greeting
-            function force_prompt_colors --on-event fish_prompt
-                set -g fish_color_host brred
-            end
-          '';
-          shellAliases = {
-            ls = "eza";
-          };
-        };
         users.users.frank = {
           password = "evil";
           isNormalUser = true;
@@ -58,23 +47,8 @@
                 flask
               ]
             ))
-            # python313Packages.flask
-            # python313Packages.requests
-
           ];
         };
-        environment.systemPackages = with pkgs; [
-          neovim
-          wget
-          curl
-          git
-          ripgrep
-          fd
-          btop
-          inetutils
-          file
-          eza
-        ];
 
         networking.firewall.allowedTCPPortRanges = [
           {
@@ -83,8 +57,6 @@
           }
         ];
         networking.firewall.allowedTCPPorts = [ ];
-
-        system.stateVersion = "25.11";
       };
   };
   containers.infected = {
@@ -92,13 +64,15 @@
     privateNetwork = true;
     hostBridge = "br0";
     localAddress = "10.10.10.2/24";
-    # hostAddress = "10.10.10.1";
-    # localAddress = "10.10.10.2";
     ephemeral = true;
-    # privateUsers = "pick";
     config =
       { pkgs, ... }:
       {
+
+        imports = [
+          ./base.nix
+        ];
+
         networking.hostName = "infected";
 
         programs.fish = {
@@ -120,20 +94,6 @@
           shell = pkgs.fish;
           extraGroups = [ "wheel" ];
         };
-        environment.systemPackages = with pkgs; [
-          neovim
-          wget
-          curl
-          git
-          ripgrep
-          fd
-          btop
-          inetutils
-          file
-          eza
-          nmap
-          netcat
-        ];
 
         system.stateVersion = "25.11";
       };
@@ -147,40 +107,23 @@
     config =
       { pkgs, ... }:
       {
+
+        imports = [
+          ./base.nix
+        ];
+
         networking.hostName = "router";
 
-        programs.fish = {
-          enable = true;
-          interactiveShellInit = ''
-            set fish_greeting
-            function force_prompt_colors --on-event fish_prompt
-            set -g fish_color_host brblue
-            end
-          '';
-          shellAliases = {
-            ls = "eza";
-          };
-        };
         users.users.frank = {
           isNormalUser = true;
           password = "evil";
           # hashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
           shell = pkgs.fish;
+          packages = with pkgs; [
+            nmap
+            netcat
+          ];
         };
-        environment.systemPackages = with pkgs; [
-          neovim
-          wget
-          curl
-          git
-          ripgrep
-          fd
-          btop
-          inetutils
-          file
-          eza
-          nmap
-          netcat
-        ];
 
         services.openssh = {
           enable = true;
@@ -188,7 +131,6 @@
           ports = [ 22 ];
         };
 
-        system.stateVersion = "25.11";
       };
   };
   containers.camera = {
@@ -203,21 +145,10 @@
 
         imports = [
           ./telnet.nix
+          ./base.nix
         ];
-        networking.hostName = "camera";
 
-        programs.fish = {
-          enable = true;
-          interactiveShellInit = ''
-            set fish_greeting
-            function force_prompt_colors --on-event fish_prompt
-            set -g fish_color_host brblue
-            end
-          '';
-          shellAliases = {
-            ls = "eza";
-          };
-        };
+        networking.hostName = "camera";
 
         users.users.frank = {
           isNormalUser = true;
@@ -225,32 +156,12 @@
           # initialHashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
           shell = pkgs.fish;
         };
-        environment.systemPackages = with pkgs; [
-          neovim
-          curl
-          git
-          ripgrep
-          fd
-          btop
-          eza
-          netcat
-        ];
 
-        # programs.neovim = {
-        #   enable = true;
-        #   configure = {
-        #     # customLuaRc = '''';
-        #     packages.myVimPackage = with pkgs.vimPlugins; {
-        #         start = [ lualine-nvim gruvbox-nvim ];
-        #         opt = [ ];
-        #     };
-        #   };
-        # };
+        services.telnet = {
+          enable = true;
+          openFirewall = true;
+        };
 
-        services.telnet.enable = true;
-        services.telnet.openFirewall = true;
-
-        system.stateVersion = "25.11";
       };
   };
 }
