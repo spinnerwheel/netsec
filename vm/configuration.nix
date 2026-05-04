@@ -6,8 +6,8 @@
 }:
 {
   imports = [
-    (modulesPath + "/profiles/minimal.nix")
-    (modulesPath + "/virtualisation/virtualbox-image.nix")
+    # (modulesPath + "/profiles/minimal.nix")
+    # (modulesPath + "/virtualisation/virtualbox-image.nix")
     # (modulesPath + "/profiles/qemu-guest.nix")
     ./gnome.nix
     ./containers.nix
@@ -69,6 +69,7 @@
     packages = with pkgs; [
       kitty
       eza
+      tmux
     ];
     shell = pkgs.fish;
   };
