@@ -85,6 +85,7 @@
           '';
           shellAliases = {
             ls = "eza";
+            shell = "machinectl shell";
           };
         };
         users.users.frank = {
@@ -93,6 +94,10 @@
           # hashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
           shell = pkgs.fish;
           extraGroups = [ "wheel" ];
+          packages = with pkgs; [
+            nmap
+            netcat
+          ];
         };
 
         system.stateVersion = "25.11";
@@ -155,6 +160,10 @@
           password = "evil";
           # initialHashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
           shell = pkgs.fish;
+          packages = with pkgs; [
+            nmap
+            netcat
+          ];
         };
 
         services.telnet = {
