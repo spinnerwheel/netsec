@@ -20,12 +20,20 @@
     localAddress = "10.10.10.100/24";
     ephemeral = true;
     bindMounts."/code" = {
-      # hostPath = "/home/toms/Documents/unitn/network-security/lab/vm/code";
-      hostPath = "/home/uru/netsec/vm/code";
+      hostPath = "/home/toms/Documents/unitn/network-security/lab/vm/code";
+      # hostPath = "/home/uru/netsec/vm/code";
       isReadOnly = true;
     };
     config =
       { pkgs, ... }:
+      let
+        pythonEnv = pkgs.python3.withPackages (
+          ps: with ps; [
+            requests
+            flask
+          ]
+        );
+      in
       {
 
         imports = [
@@ -40,23 +48,33 @@
           # hashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
           shell = pkgs.fish;
           extraGroups = [ "wheel" ];
-          packages = with pkgs; [
-            (python3.withPackages (
-              python-pkgs: with python-pkgs; [
-                requests
-                flask
-              ]
-            ))
-          ];
+          packages = [ pythonEnv ];
         };
 
-        networking.firewall.allowedTCPPortRanges = [
-          {
-            from = 5000;
-            to = 5050;
-          }
-        ];
-        networking.firewall.allowedTCPPorts = [ ];
+        systemd.services = {
+          loader = {
+            enable = true;
+            after = [ "network.target" ];
+            wantedBy = [ "multi-user.target" ];
+            description = "Loader service.";
+            serviceConfig = {
+              Type = "simple";
+              User = "frank";
+              ExecStart = "${pythonEnv}/bin/python3 /code/loader/loader.py";
+            };
+          };
+          report = {
+            enable = true;
+            after = [ "network.target" ];
+            wantedBy = [ "multi-user.target" ];
+            description = "Report service.";
+            serviceConfig = {
+              Type = "simple";
+              User = "frank";
+              ExecStart = "${pythonEnv}/bin/python3 /code/report/report_server.py";
+            };
+          };
+        };
       };
   };
   containers.infected = {

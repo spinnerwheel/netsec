@@ -1,0 +1,103 @@
+{}:
+{
+  environment.etc."tmux.conf".text = ''
+    set -g default-terminal "tmux-256color"
+    set -as terminal-features ",xterm-256color:rgb"
+
+    # steps to change prefix key
+    set -g prefix C-Space
+    unbind C-b
+    bind C-Space send-prefix
+
+    # set evil keybindings
+    set -g mode-keys vi
+    set -g status-keys vi
+
+    # change the base-index to start on 1
+    set -g base-index 1
+
+    # set escape time to the advised one
+    set -g escape-time 0
+
+    ## Clipboard stuff
+    set -g set-clipboard external
+
+    ## Mouse
+    set -g mouse on
+
+    ## Custom keybindings
+    bind-key -T copy-mode-vi 'v' send -X begin-selection
+    bind-key -T copy-mode-vi 'y' send -X copy-selection
+
+    bind-key -T prefix - split-window -v
+    bind-key -T prefix \\ split-window -h
+    bind-key -T prefix x kill-pane
+    bind-key -T prefix X confirm-before kill-session
+
+    # vim-like motion
+    bind-key -T prefix h select-pane -R
+    bind-key -T prefix j select-pane -D
+    bind-key -T prefix k select-pane -U
+    bind-key -T prefix l select-pane -L
+
+    # Switch to last client
+    bind l switch-client -l
+
+    # Easily reload config file
+    bind r source-file ~/.tmux.conf; \
+             display-message "source-file done"
+
+    # Easily change session path
+    bind M-c attach-session -c "#{pane_current_path}"
+
+    ## Various options
+    # gorgious history limit
+    set -g  history-limit	10000
+    set-option -g   set-titles        on
+    set-option -gw  automatic-rename  on
+
+
+    # -------------------------
+    ## Design tweaks
+    # don't do anything when a 'bell' rings
+    set -g visual-activity off
+    set -g visual-bell off
+    set -g visual-silence off
+    setw -g monitor-activity off
+    set -g bell-action none
+
+    # clock mode
+    setw -g clock-mode-colour yellow
+
+    # copy mode
+    setw -g mode-style 'fg=black bg=gray'
+
+    # panes
+    set -g pane-border-style 'fg=green'
+    set -g pane-active-border-style 'fg=brightgreen'
+
+    # statusbar
+    set -g status-position bottom
+    set -g status-justify left
+    set -g status-style 'fg=green'
+
+    set -g status-left ""
+    set -g status-left-length 10
+
+    set -g status-right-style 'fg=black bg=brightgreen'
+    # set -g status-right '%d/%m %H:%M #{session_name}'
+    set -g status-right '#{session_name}'
+    set -g status-right-length 50
+
+    setw -g window-status-current-style 'fg=black bg=green'
+    setw -g window-status-current-format ' #I #W #F '
+
+    setw -g window-status-style 'fg=green bg=black'
+    setw -g window-status-format ' #I #[fg=white]#W #[fg=yellow]#F '
+
+    setw -g window-status-bell-style 'fg=white bg=green bold'
+
+    # messages
+    set -g message-style 'fg=brightwhite bg=green'
+  '';
+}

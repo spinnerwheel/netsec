@@ -11,13 +11,12 @@
     # (modulesPath + "/profiles/qemu-guest.nix")
     ./gnome.nix
     ./containers.nix
+    ./fish.nix
+    ./tmux.nix
   ];
 
+  services.xserver.enable = true;
   networking.networkmanager.enable = true;
-
-  services.xserver = {
-    enable = true;
-  };
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -54,15 +53,6 @@
     file
   ];
 
-  # Enable fish
-  programs.fish = {
-    enable = true;
-    shellAliases = {
-      ls = "eza";
-      shell = "machinectl shell";
-    };
-  };
-
   # Users
   users.users.uru = {
     isNormalUser = true;
@@ -82,14 +72,6 @@
 
   # VirtualBox configurations
   virtualisation.virtualbox.guest.enable = true;
-
-  virtualisation.vmVariant = {
-    # the following configuration is added only when building VM with `build-vm`
-    virtualisation = {
-      memorySize = 2048; # use 2048MiB memory
-      cores = 4; # use 4 cpu cores
-    };
-  };
 
   # Detects files in the store that have identical contents,
   # and replaces them with hard links to a single copy.
