@@ -20,8 +20,8 @@
     localAddress = "10.10.10.100/24";
     ephemeral = true;
     bindMounts."/code" = {
-      hostPath = "/home/toms/Documents/unitn/network-security/lab/vm/code";
-      # hostPath = "/home/uru/netsec/vm/code";
+      # hostPath = "/home/toms/Documents/unitn/network-security/lab/vm/code";
+      hostPath = "/home/uru/netsec/vm/code";
       isReadOnly = true;
     };
     config =

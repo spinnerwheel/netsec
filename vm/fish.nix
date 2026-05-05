@@ -1,4 +1,3 @@
-{ }:
 {
   # Enable fish
   programs.fish = {
