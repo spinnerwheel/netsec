@@ -17,10 +17,6 @@
 
   services.xserver = {
     enable = true;
-    desktopManager = {
-      xterm.enable = false;
-      xfce.enable = true;
-    };
   };
 
   # Configure keymap in X11
@@ -63,6 +59,7 @@
     enable = true;
     shellAliases = {
       ls = "eza";
+      shell = "machinectl shell";
     };
   };
 

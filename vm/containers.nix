@@ -21,7 +21,7 @@
     ephemeral = true;
     bindMounts."/code" = {
       # hostPath = "/home/toms/Documents/unitn/network-security/lab/vm/code";
-      hostPath = "/home/uru/code";
+      hostPath = "/home/uru/netsec/vm/code";
       isReadOnly = true;
     };
     config =
