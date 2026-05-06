@@ -1,4 +1,3 @@
-{ }:
 {
   # Enable fish
   programs.fish = {
@@ -8,15 +7,16 @@
       shell = "machinectl shell";
       rebuild = "sudo nixos-rebuild switch";
     };
-    # interactiveShellInit = ''
-    #   function restart
-    #     for machine in $(sudo nixos-container list)
-    #       echo -n "[i] Restarting" $machine " "; and \
-    #       sudo nixos-container restart $machine; and \
-    #       echo ✅
-    #     end
-    #   end
-    # '';
+    interactiveShellInit = ''
+      set fish_greeting
+      function restart
+        for machine in $(sudo nixos-container list)
+          echo -n "[i] Restarting" $machine " "; and \
+          sudo nixos-container restart $machine; and \
+          echo ✅
+        end
+      end
+    '';
   };
   environment.etc = {
     "fish/functions/restart.fish".text = ''

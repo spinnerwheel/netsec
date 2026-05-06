@@ -6,9 +6,6 @@
 }:
 {
   imports = [
-    # (modulesPath + "/profiles/minimal.nix")
-    # (modulesPath + "/virtualisation/virtualbox-image.nix")
-    # (modulesPath + "/profiles/qemu-guest.nix")
     ./gnome.nix
     ./containers.nix
     ./fish.nix

@@ -1,4 +1,3 @@
-{}:
 {
   environment.etc."tmux.conf".text = ''
     set -g default-terminal "tmux-256color"
