@@ -42,10 +42,18 @@
 
         networking.hostName = "attacker";
 
+        programs.fish = {
+          interactiveShellInit = ''
+            set fish_greeting
+            function force_prompt_colors --on-event fish_prompt
+              set -g fish_color_host brred
+            end
+          '';
+        };
+
         users.users.frank = {
-          password = "evil";
           isNormalUser = true;
-          # hashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
+          hashedPassword = "$y$j9T$2LuJsKeJt2Ry6JNPCxC8f.$p8a1vBbeJmnBP9A5ApGpfM2F9kP5WmGTaJPTfiMOdY0";
           shell = pkgs.fish;
           extraGroups = [ "wheel" ];
           packages = [ pythonEnv ];
@@ -77,17 +85,15 @@
 
           cnc = {
             enable = true;
-            after = ["network.target" ];
+            after = [ "network.target" ];
             wantedBy = [ "multi-user.target" ];
             description = "CNC service.";
             serviceConfig = {
-                Type = "simple";
-                User = "frank";
-                ExecStart = "${pythonEnv}/bin/python3 /code/cnc/cnc.py";
+              Type = "simple";
+              User = "frank";
+              ExecStart = "${pythonEnv}/bin/python3 /code/cnc/cnc.py";
             };
           };
-
-
 
         };
       };
@@ -109,29 +115,24 @@
         networking.hostName = "infected";
 
         programs.fish = {
-          enable = true;
           interactiveShellInit = ''
             set fish_greeting
             function force_prompt_colors --on-event fish_prompt
-            set -g fish_color_host brred
+              set -g fish_color_host brblue
             end
           '';
-          shellAliases = {
-            ls = "eza";
-            shell = "machinectl shell";
-          };
         };
-        users.users.frank = {
-          password = "evil";
-          isNormalUser = true;
-          # hashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
+        users.users.admin = {
+          isSystemUser = true;
+          hashedPassword = "$y$j9T$UnZRcyB4EucC1MNswXVQ5.$PWu3XmGm5LCCTGWXnUjFAO9FojKGJ8KKmXxNwICjwq.";
           shell = pkgs.fish;
-          extraGroups = [ "wheel" ];
           packages = with pkgs; [
             nmap
             netcat
           ];
         };
+        users.users.admin.group = "admin";
+        users.groups.admin = {};
 
         system.stateVersion = "25.11";
       };
@@ -152,22 +153,31 @@
 
         networking.hostName = "router";
 
-        users.users.frank = {
-          isNormalUser = true;
-          password = "evil";
-          # hashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
+        programs.fish = {
+          interactiveShellInit = ''
+            set fish_greeting
+            function force_prompt_colors --on-event fish_prompt
+              set -g fish_color_host brmagenta
+            end
+          '';
+        };
+
+        users.users.bruno = {
+          isSystemUser = true;
+          hashedPassword = "$y$j9T$BuuG47SDFub.WAPjFOtPD0$SUoyu8RXy4Gc.vtGTiwqP8AQfCBOKySckGP6qFPMbf9";
           shell = pkgs.fish;
           packages = with pkgs; [
-            nmap
-            wget
             netcat
           ];
         };
+        users.users.bruno.group = "bruno";
+        users.groups.bruno = {};
 
         services.openssh = {
           enable = true;
           banner = "VulNeRablE RouTeR!";
           ports = [ 22 ];
+          settings.PermitRootLogin = "yes";
         };
 
       };
@@ -189,27 +199,29 @@
 
         networking.hostName = "camera";
 
-        users.users.frank = {
-          isNormalUser = true;
-          password = "evil";
-          # initialHashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
+        programs.fish = {
+          interactiveShellInit = ''
+            set fish_greeting
+            function force_prompt_colors --on-event fish_prompt
+              set -g fish_color_host brcyan
+            end
+          '';
+        };
+
+        users.users.root = {
+          isSystemUser = true;
+          hashedPassword = "$y$j9T$bhnv9Zsbzmd2WDd5p.87J0$FPeSvvnm2DN1CY2j8k2jCSPhtf43mlUNP9OKRvJ56PD";
           shell = pkgs.fish;
           packages = with pkgs; [
-            nmap
             netcat
-            wget
           ];
         };
 
-        services.telnet = {
-          enable = true;
-          openFirewall = true;
-        };
-
+        services.telnet.enable = true;
       };
   };
 
-  containers.genericIot1 = {
+  containers.ecografo = {
     autoStart = false;
     privateNetwork = true;
     hostBridge = "br0";
@@ -218,35 +230,31 @@
     config =
       { pkgs, ... }:
       {
-
         imports = [
-          ./telnet.nix
           ./base.nix
         ];
 
-        networking.hostName = "genericIot1";
+        networking.hostName = "ecografo";
 
-        users.users.frank = {
-          isNormalUser = true;
-          password = "1234";
-          # initialHashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
+        users.users.root = {
+          isSystemUser = true;
+          hashedPassword = "$y$j9T$fMnbXS/xwmo5lpn.C3aiE0$xBIWGTQLqbN/GYe2b/yutc1/cFAaRtffZkRaSiTMqT.";
           shell = pkgs.fish;
           packages = with pkgs; [
-            nmap
             netcat
-            wget
           ];
         };
 
-        services.telnet = {
+        services.openssh = {
           enable = true;
-          openFirewall = true;
+          banner = "VulNeRablE EcogRaFo!";
+          ports = [ 22 ];
+          settings.PermitRootLogin = "yes";
         };
-
       };
   };
 
-containers.genericIot2= {
+  containers.temperature-sensor = {
     autoStart = false;
     privateNetwork = true;
     hostBridge = "br0";
@@ -261,26 +269,50 @@ containers.genericIot2= {
           ./base.nix
         ];
 
-        networking.hostName = "genericIot2";
+        networking.hostName = "temperature-sensor";
 
-        users.users.frank = {
-          isNormalUser = true;
-          password = "root";
-          # initialHashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
+        users.users.mother = {
+          isSystemUser = true;
+          hashedPassword = "$y$j9T$AMU56y5A/.QBLGQf7kxzv/$8rYj48hXuKvvRi7xseu/6L4RDCCJaxPG3K27l1Dl3p9";
           shell = pkgs.fish;
           packages = with pkgs; [
-            nmap
             netcat
-            wget
+          ];
+        };
+        users.users.mother.group = "mother";
+        users.groups.mother = {};
+
+        services.telnet.enable = true;
+      };
+  };
+  containers.victim = {
+    autoStart = false;
+    privateNetwork = true;
+    hostBridge = "br0";
+    localAddress = "10.10.10.20/24";
+    ephemeral = true;
+    config =
+      { pkgs, ... }:
+      {
+
+        imports = [
+          ./base.nix
+        ];
+
+        networking.hostName = "victim";
+
+        users.users.rosmary = {
+          isNormalUser = true;
+          hashedPassword = "$y$j9T$WR4q//1AaZ.ZKFvapfqZq1$wp8WgR18qPGaucCjZS2HWL/5OGnCRmyv2rP/9nV8T.2";
+          shell = pkgs.fish;
+          packages = with pkgs; [
+            netcat
           ];
         };
 
-        services.telnet = {
-          enable = true;
-          openFirewall = true;
-        };
-
+        # we have to listen on port 80 with a simple website
+        # also log all the IPs that come to that port
+        services.nginx.enable = true;
       };
   };
-
 }

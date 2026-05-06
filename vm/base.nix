@@ -2,12 +2,6 @@
 {
   programs.fish = {
     enable = true;
-    interactiveShellInit = ''
-      set fish_greeting
-      function force_prompt_colors --on-event fish_prompt
-      set -g fish_color_host brred
-      end
-    '';
     shellAliases = {
       ls = "eza";
     };
@@ -24,6 +18,7 @@
     python3
     neovim
     ripgrep
+    wget
   ];
 
   networking.firewall.enable  = false;
