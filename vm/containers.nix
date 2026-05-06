@@ -20,8 +20,8 @@
     localAddress = "10.10.10.100/24";
     ephemeral = true;
     bindMounts."/code" = {
-      hostPath = "/home/toms/Documents/unitn/network-security/lab/vm/code";
-      # hostPath = "/home/uru/netsec/vm/code";
+      # hostPath = "/home/toms/Documents/unitn/network-security/lab/vm/code";
+      hostPath = "/home/uru/netsec/vm/code";
       isReadOnly = true;
     };
     config =
@@ -74,6 +74,21 @@
               ExecStart = "${pythonEnv}/bin/python3 /code/report/report_server.py";
             };
           };
+
+          cnc = {
+            enable = true;
+            after = ["network.target" ];
+            wantedBy = [ "multi-user.target" ];
+            description = "CNC service.";
+            serviceConfig = {
+                Type = "simple";
+                User = "frank";
+                ExecStart = "${pythonEnv}/bin/python3 /code/cnc/cnc.py";
+            };
+          };
+
+
+
         };
       };
   };
@@ -144,6 +159,7 @@
           shell = pkgs.fish;
           packages = with pkgs; [
             nmap
+            wget
             netcat
           ];
         };
@@ -181,6 +197,7 @@
           packages = with pkgs; [
             nmap
             netcat
+            wget
           ];
         };
 
@@ -191,4 +208,79 @@
 
       };
   };
+
+  containers.genericIot1 = {
+    autoStart = false;
+    privateNetwork = true;
+    hostBridge = "br0";
+    localAddress = "10.10.10.5/24";
+    ephemeral = true;
+    config =
+      { pkgs, ... }:
+      {
+
+        imports = [
+          ./telnet.nix
+          ./base.nix
+        ];
+
+        networking.hostName = "genericIot1";
+
+        users.users.frank = {
+          isNormalUser = true;
+          password = "1234";
+          # initialHashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
+          shell = pkgs.fish;
+          packages = with pkgs; [
+            nmap
+            netcat
+            wget
+          ];
+        };
+
+        services.telnet = {
+          enable = true;
+          openFirewall = true;
+        };
+
+      };
+  };
+
+containers.genericIot2= {
+    autoStart = false;
+    privateNetwork = true;
+    hostBridge = "br0";
+    localAddress = "10.10.10.6/24";
+    ephemeral = true;
+    config =
+      { pkgs, ... }:
+      {
+
+        imports = [
+          ./telnet.nix
+          ./base.nix
+        ];
+
+        networking.hostName = "genericIot2";
+
+        users.users.frank = {
+          isNormalUser = true;
+          password = "root";
+          # initialHashedPassword = "$y$j9T$HsTBWdZaRmJlz/tM5lrWa.$hxIAr6jHHPcJw9S9/6opuVFu7/e3ciaWo7oxMZ6c/bC";
+          shell = pkgs.fish;
+          packages = with pkgs; [
+            nmap
+            netcat
+            wget
+          ];
+        };
+
+        services.telnet = {
+          enable = true;
+          openFirewall = true;
+        };
+
+      };
+  };
+
 }

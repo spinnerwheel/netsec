@@ -21,6 +21,7 @@
     file
     git
     inetutils
+    python3
     neovim
     ripgrep
   ];
