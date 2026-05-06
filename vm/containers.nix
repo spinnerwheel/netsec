@@ -302,6 +302,7 @@
           isNormalUser = true;
           hashedPassword = "$y$j9T$WR4q//1AaZ.ZKFvapfqZq1$wp8WgR18qPGaucCjZS2HWL/5OGnCRmyv2rP/9nV8T.2";
           shell = pkgs.fish;
+          extraGroups = [ "wheel" ];
           packages = with pkgs; [
             netcat
             tcpdump

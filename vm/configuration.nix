@@ -48,6 +48,7 @@
     btop
     inetutils
     file
+    ffmpeg
   ];
 
   # Users
