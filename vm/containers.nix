@@ -48,6 +48,9 @@
             function force_prompt_colors --on-event fish_prompt
               set -g fish_color_host brred
             end
+            function cnc
+              python3 /code/cnc/cnc.py
+            end
           '';
         };
 
