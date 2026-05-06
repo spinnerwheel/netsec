@@ -24,6 +24,7 @@
     fd
     file
     git
+    hping
     inetutils
     python3
     neovim

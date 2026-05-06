@@ -310,6 +310,7 @@
           shell = pkgs.fish;
           packages = with pkgs; [
             netcat
+            tcpdump
           ];
         };
 
