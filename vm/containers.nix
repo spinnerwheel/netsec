@@ -125,17 +125,15 @@
             end
           '';
         };
-        users.users.admin = {
+        users.users.root = {
           isSystemUser = true;
+          shell = pkgs.bash;
           hashedPassword = "$y$j9T$UnZRcyB4EucC1MNswXVQ5.$PWu3XmGm5LCCTGWXnUjFAO9FojKGJ8KKmXxNwICjwq.";
-          shell = pkgs.fish;
           packages = with pkgs; [
             nmap
             netcat
           ];
         };
-        users.users.admin.group = "admin";
-        users.groups.admin = {};
 
         system.stateVersion = "25.11";
       };
@@ -165,16 +163,14 @@
           '';
         };
 
-        users.users.bruno = {
+        users.users.root = {
           isSystemUser = true;
+          shell = pkgs.bash;
           hashedPassword = "$y$j9T$BuuG47SDFub.WAPjFOtPD0$SUoyu8RXy4Gc.vtGTiwqP8AQfCBOKySckGP6qFPMbf9";
-          shell = pkgs.fish;
           packages = with pkgs; [
             netcat
           ];
         };
-        users.users.bruno.group = "bruno";
-        users.groups.bruno = {};
 
         services.openssh = {
           enable = true;
@@ -213,8 +209,8 @@
 
         users.users.root = {
           isSystemUser = true;
+          shell = pkgs.bash;
           hashedPassword = "$y$j9T$bhnv9Zsbzmd2WDd5p.87J0$FPeSvvnm2DN1CY2j8k2jCSPhtf43mlUNP9OKRvJ56PD";
-          shell = pkgs.fish;
           packages = with pkgs; [
             netcat
           ];
@@ -241,8 +237,8 @@
 
         users.users.root = {
           isSystemUser = true;
+          shell = pkgs.bash;
           hashedPassword = "$y$j9T$fMnbXS/xwmo5lpn.C3aiE0$xBIWGTQLqbN/GYe2b/yutc1/cFAaRtffZkRaSiTMqT.";
-          shell = pkgs.fish;
           packages = with pkgs; [
             netcat
           ];
@@ -274,16 +270,14 @@
 
         networking.hostName = "temperature-sensor";
 
-        users.users.mother = {
+        users.users.root = {
           isSystemUser = true;
+          shell = pkgs.bash;
           hashedPassword = "$y$j9T$AMU56y5A/.QBLGQf7kxzv/$8rYj48hXuKvvRi7xseu/6L4RDCCJaxPG3K27l1Dl3p9";
-          shell = pkgs.fish;
           packages = with pkgs; [
             netcat
           ];
         };
-        users.users.mother.group = "mother";
-        users.groups.mother = {};
 
         services.telnet.enable = true;
       };
