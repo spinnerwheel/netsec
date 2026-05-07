@@ -26,8 +26,9 @@
     git
     hping
     inetutils
-    python3
+    lsof
     neovim
+    python3
     ripgrep
     wget
   ];
