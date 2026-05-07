@@ -110,12 +110,17 @@
             function force_prompt_colors --on-event fish_prompt
               set -g fish_color_host brblue
             end
+            function report -a ip protocol user pass
+              curl -X POST 10.10.10.100:5000/report \
+                -H "Content-Type: application/json" \
+                -d "{\"ip\": \"$ip\", \"protocol\": \"$protocol\", \"user\": \"$user\", \"pass\":\"$pass\"}"
+            end
           '';
         };
         users.users.root = {
           isSystemUser = true;
           shell = pkgs.bash;
-          hashedPassword = "$y$j9T$UnZRcyB4EucC1MNswXVQ5.$PWu3XmGm5LCCTGWXnUjFAO9FojKGJ8KKmXxNwICjwq.";
+          hashedPassword = "$y$j9T$zRuQj7TUukgm3A4NuEEUt1$4ZCKHNF1yRENDT3mAZuTWeqNRhaSK/lJ8Mc347mzFc8!";
           packages = with pkgs; [
             nmap
             netcat
@@ -197,7 +202,7 @@
         users.users.root = {
           isSystemUser = true;
           shell = pkgs.bash;
-          hashedPassword = "$y$j9T$bhnv9Zsbzmd2WDd5p.87J0$FPeSvvnm2DN1CY2j8k2jCSPhtf43mlUNP9OKRvJ56PD";
+          hashedPassword = "$y$j9T$9xsQ9NtGYmfVhV7imIZhb.$tQL5RKpQNAaqNE5cpUcC2rtB3sG/Ij/E8xdYy4F5.K9";
           packages = with pkgs; [
             netcat
           ];
@@ -260,7 +265,7 @@
         users.users.root = {
           isSystemUser = true;
           shell = pkgs.bash;
-          hashedPassword = "$y$j9T$AMU56y5A/.QBLGQf7kxzv/$8rYj48hXuKvvRi7xseu/6L4RDCCJaxPG3K27l1Dl3p9";
+          hashedPassword = "$y$j9T$.0Xsw.uWtUsUyBhy9l.Tq.$qRHqYI45mYlWfErjdSNOJ1wuGW73zAkTaMa3ZFWwcG6";
           packages = with pkgs; [
             netcat
           ];
@@ -285,7 +290,7 @@
 
         networking.hostName = "victim";
 
-        users.users.rosmary = {
+        users.users.rosemary = {
           isNormalUser = true;
           hashedPassword = "$y$j9T$WR4q//1AaZ.ZKFvapfqZq1$wp8WgR18qPGaucCjZS2HWL/5OGnCRmyv2rP/9nV8T.2";
           shell = pkgs.fish;
