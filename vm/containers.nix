@@ -85,19 +85,6 @@
               ExecStart = "${pythonEnv}/bin/python3 /code/report/report_server.py";
             };
           };
-
-          cnc = {
-            enable = true;
-            after = [ "network.target" ];
-            wantedBy = [ "multi-user.target" ];
-            description = "CNC service.";
-            serviceConfig = {
-              Type = "simple";
-              User = "frank";
-              ExecStart = "${pythonEnv}/bin/python3 /code/cnc/cnc.py";
-            };
-          };
-
         };
       };
   };
