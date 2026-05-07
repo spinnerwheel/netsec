@@ -11,8 +11,8 @@ CNC_PORT = 5002
 CNC_PORT_TO_ATTACKER = 5003
 
 
-ATTACKER_USER = "admin"
-ATTACKER_PASS = "admin"
+ATTACKER_USER = "dead"
+ATTACKER_PASS = "beef"
 
 bots = []
 
