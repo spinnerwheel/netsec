@@ -48,7 +48,7 @@ in
       wantedBy = [ "multi-user.target" ];
 
       serviceConfig = {
-        ExecStart = "${pkgs.busybox}/bin/telnetd -p ${toString cfg.port} -l ${pkgs.busybox}/bin/login";
+        ExecStart = "${pkgs.busybox}/bin/telnetd -p ${toString cfg.port} -l ${pkgs.shadow}/bin/login";
         Type = "forking";
       };
     };

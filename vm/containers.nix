@@ -120,7 +120,7 @@
         users.users.root = {
           isSystemUser = true;
           shell = pkgs.bash;
-          hashedPassword = "$y$j9T$zRuQj7TUukgm3A4NuEEUt1$4ZCKHNF1yRENDT3mAZuTWeqNRhaSK/lJ8Mc347mzFc8!";
+          hashedPassword = "$y$j9T$zRuQj7TUukgm3A4NuEEUt1$4ZCKHNF1yRENDT3mAZuTWeqNRhaSK/lJ8Mc347mzFc8";
           packages = with pkgs; [
             nmap
             netcat
